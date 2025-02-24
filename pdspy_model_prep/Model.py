@@ -50,4 +50,4 @@ class Model:
         if batch_script:
             for disk_type in self.disk_types:
                 create_batch_submit(source_name = self.source_name, source_dir = self.source_dir, 
-                                    disk_type = disk_type, ncpu = ncpu):
+                                    disk_type = disk_type, ncpu = ncpu)
