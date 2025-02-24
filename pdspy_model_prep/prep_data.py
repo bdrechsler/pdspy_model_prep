@@ -2,7 +2,7 @@
 import glob
 import os
 import numpy as np
-from casatasks import mstransform, tclean, listobs, concat, rmtables, impbcor, exportfits
+from casatasks import mstransform, tclean, listobs, concat, exportfits, msmd
 import pdspy.interferometry as uv
 from .gas_lines import line_dict
 from .create_config import create_config
@@ -36,36 +36,18 @@ def prep_data(source_name, source_dir, line_name, chan_width, nchan,
 
     for line_vis in line_vis_list:
         # find spectral window corresponding to rfreq
+        # convert rest frequency to Hz
+        rfreq_Hz = float(rfreq[:-3]) * 1e9
+        
+        # use msmd to get spw info
+        msmd.open(line_vis)
+        nspw = msmd.nspw()
+        # create an array of the central freq for each spw
+        spw_freqs = np.array([msmd.meanfreq(spw) for spw in range(nspw)])
 
-        # create listobs file
-        listfile = line_vis.replace('.ms', '.listobs')
-        os.system("rm -rf " + listfile)
-        listobs(vis=line_vis, listfile=listfile, verbose=False)
-
-        # read listobs file into a list of lines
-        listobs_file = open(listfile, "r")
-        lines = listobs_file.readlines()
-
-        # find lines corresponding to spws
-        for i in range(len(lines)):
-            split_line = lines[i].split() # split line into list of strings
-            if split_line: # make sure line is not empty
-                if split_line[0] == 'SpwID':
-                    first_ind = i+1
-                elif split_line[0] == 'Antennas:':
-                    last_ind = i
-
-        spw_header = lines[first_ind - 1] # line defining spw columns
-        spw_lines = lines[first_ind:last_ind] # lines correponding to the spws
-
-        # find spw with central frequency closest to rfreq
-        ctrfreq_ind = spw_header.split().index('CtrFreq(MHz)')
-        spws = [spw_lines[i].split()[ctrfreq_ind] for i in range(len(spw_lines))]
-        spws_array = np.array(spws).astype('float64')
-        freq_MHz = float(rfreq[:-3]) * 1000
-        spw = str(np.argmin(np.abs(spws_array-freq_MHz)))
-        listobs_file.close()
-
+        # find spw with central freq closest to rfreq 
+        spw = str(np.argmin(np.abs(spw_freqs - rfreq_Hz)))
+        
         outfile = line_vis.replace('spectral_line.ms', line_name+'_lsrk.ms') # name of output ms file
         print("Creating " + outfile)
         os.system("rm -rf " + outfile)
