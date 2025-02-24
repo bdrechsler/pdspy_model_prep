@@ -6,13 +6,12 @@ from .create_batch_submit import create_batch_submit
 
 class Model:
 
-    def __init__(self, source_name, dpc, vsys, user='', line_name='C18O', chan_width='0.334km/s',
+    def __init__(self, source_name, dpc, vsys, line_name='C18O', chan_width='0.334km/s',
                  nchan=42, robust=2, x0=[-0.5, 0.5], y0=[-0.5, 0.5], source_dir = './',
                  disk_types=["truncated", "exptaper", "dartois-exptaper", "dartois-truncated"]):
 
         self.source_name = source_name
         self.dpc = dpc
-        self.user = user
         self.line_name = line_name
         self.chan_width = chan_width
         self.nchan = nchan
@@ -20,7 +19,7 @@ class Model:
         self.robust = robust
         self.x0=x0
         self.y0=y0
-        self.source_dir = source_dir + source + '/'
+        self.source_dir = source_dir + source_name + '/'
         self.disk_types = disk_types
 
     def prep_model(self, data=True, config=True, batch_script=True,
