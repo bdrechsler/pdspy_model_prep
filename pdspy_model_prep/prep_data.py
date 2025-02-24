@@ -2,7 +2,7 @@
 import glob
 import os
 import numpy as np
-from casatasks import mstransform, tclean, listobs, concat, exportfits, msmd
+from casatasks import mstransform, tclean, concat, exportfits, msmd
 import pdspy.interferometry as uv
 from .gas_lines import line_dict
 from .create_config import create_config
@@ -47,6 +47,7 @@ def prep_data(source_name, source_dir, line_name, chan_width, nchan,
 
         # find spw with central freq closest to rfreq 
         spw = str(np.argmin(np.abs(spw_freqs - rfreq_Hz)))
+        print('spectral window: ', spw)
         
         outfile = line_vis.replace('spectral_line.ms', line_name+'_lsrk.ms') # name of output ms file
         print("Creating " + outfile)
@@ -115,5 +116,4 @@ def prep_data(source_name, source_dir, line_name, chan_width, nchan,
     new_data.write(output_file)
     if remove_files:
         os.system('rm -rf {}/*.ms'.format(data_dir))
-        os.system('rm -rf {}/*.listobs'.format(data_dir))
         os.system('rm -rf {}/*.sumwt'.format(data_dir))
