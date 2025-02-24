@@ -26,7 +26,7 @@ class Model:
                    remove_files=False, ncpu=1):
 
         # if there are ms files, prep the data
-        data_dir = source_dir + 'data/'
+        data_dir = self.source_dir + 'data/'
         ms_files = glob.glob(data_dir + "*.ms")
         if data and len(ms_files) != 0:
             
