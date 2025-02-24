@@ -19,7 +19,7 @@ class Model:
         self.robust = robust
         self.x0=x0
         self.y0=y0
-        self.source_dir = source_dir + source_name + '/'
+        self.source_dir = source_dir
         self.disk_types = disk_types
 
     def prep_model(self, data=True, config=True, batch_script=True,
