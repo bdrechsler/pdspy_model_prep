@@ -22,7 +22,7 @@ def prep_data(
 
     Args:
         source_name (str): The name of the source being modeled
-        source_dir (str): The path to the root directory of the model directory
+        source_dir (str): The path to the the model directory
         line_name (str): The name of the line being modeled
         chan_width (str): The velocity with of the channels (need to include units in string)
         nchan (int): The number of velocity channels in the image cube
