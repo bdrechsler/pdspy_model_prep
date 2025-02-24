@@ -41,7 +41,7 @@ def create_config(source_name, source_dir, line_name, disk_type, dpc, vsys, x0, 
     data_file = "../data/{0}_{1}_50klam.hdf5".format(source_name, line_name)
     image_file= "../data/{0}_{1}_t2000klam.image.fits".format(source_name, line_name)
 
-    line = line_dict['line_name']
+    line = line_dict[line_name]
     freq = line['rest_freq']
     gas_file = line['data_file']
 
