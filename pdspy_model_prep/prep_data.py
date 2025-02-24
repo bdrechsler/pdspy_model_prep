@@ -67,7 +67,7 @@ def prep_data(source_name, source_dir, line_name, chan_width, nchan,
         spw = str(np.argmin(np.abs(spws_array-freq_MHz)))
         listobs_file.close()
 
-        outfile = line_vis.replace('spectral_line.ms', linename+'_lsrk.ms') # name of output ms file
+        outfile = line_vis.replace('spectral_line.ms', line_name+'_lsrk.ms') # name of output ms file
         print("Creating " + outfile)
         os.system("rm -rf " + outfile)
 
