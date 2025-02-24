@@ -37,7 +37,7 @@ class Model:
 
         if config or batch_script:
             for disk_type in self.disk_types:
-                model_dir = self.source_dir + disk_type + '/'
+                model_dir = self.source_dir + disk_type + '_' + self.line_name + '/'
                 if not os.path.exists(model_dir):
                     os.system("mkdir {}".format(model_dir))
 
@@ -49,5 +49,6 @@ class Model:
 
         if batch_script:
             for disk_type in self.disk_types:
-                create_batch_submit(source_name = self.source_name, source_dir = self.source_dir, 
-                                    disk_type = disk_type, ncpu = ncpu)
+                create_batch_submit(source_name = self.source_name, line_name=self.line_name, 
+                                    source_dir = self.source_dir, disk_type = disk_type,
+                                    ncpu = ncpu)

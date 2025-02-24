@@ -25,7 +25,6 @@ def prep_data(source_name, source_dir, line_name, chan_width, nchan,
         robust (float): The robust value used in the imaging
         remove_files (bool): If True, will delete the extra data files to save space
     """
-    source_dir = source_dir + source + '/'
     line_vis_list = glob.glob(source_dir + "data/*spectral_line.ms") # list of spectral line ms files
     line = line_dict[line_name]
     rfreq = line['rest_freq']
@@ -84,7 +83,7 @@ def prep_data(source_name, source_dir, line_name, chan_width, nchan,
     ##### Clean and Image the Data #######
     """
     data_dir = source_dir + 'data/'
-    imagename = data_dir + source_name + '_' + linename + '_t2000klam'
+    imagename = data_dir + source_name + '_' + line_name + '_t2000klam'
     for ext in ['.image','.mask','.model','.pb','.psf','.residual','.sumwt','.workingdirectory']:
         os.system('rm -rf ' + imagename + ext)
 
@@ -112,7 +111,7 @@ def prep_data(source_name, source_dir, line_name, chan_width, nchan,
     print("Writting hdf5")
     # concatinate regridded visibility files
     os.system("rm -rf " + data_dir + "*concat.ms")
-    concat_file = data_dir + source_name + '_' + linename + '_' + 'concat.ms'
+    concat_file = data_dir + source_name + '_' + line_name + '_' + 'concat.ms'
     concat(vis=regrid_vis, concatvis=concat_file)
 
     # load concated ms file into pdspy
@@ -129,7 +128,7 @@ def prep_data(source_name, source_dir, line_name, chan_width, nchan,
     new_weights = data.weights[good,:]
     # create hdf5 file
     os.system("rm -rf {}/*.hdf5".format(data_dir))
-    output_file = data_dir + source_name + '_' + linename + '_50klam.hdf5'
+    output_file = data_dir + source_name + '_' + line_name + '_50klam.hdf5'
     new_data = uv.Visibilities(new_u, new_v, data.freq, new_real, new_imag, new_weights)
     new_data.write(output_file)
     if remove_files:

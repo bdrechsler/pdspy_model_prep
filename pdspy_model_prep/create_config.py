@@ -37,7 +37,6 @@ def write_dynesty_params(file, nwalkers=100, steps_per_iter=20, max_nsteps=2000,
 def create_config(source_name, source_dir, line_name, disk_type, dpc, vsys, x0, y0):
     """Create a config.py file for the fit run"""
     
-    source_dir = source_dir + source_name + '/'
     # paths to the data (hdf5) and image (fits) files
     data_file = "../data/{0}_{1}_50klam.hdf5".format(source_name, line_name)
     image_file= "../data/{0}_{1}_t2000klam.image.fits".format(source_name, line_name)
@@ -135,7 +134,7 @@ def create_config(source_name, source_dir, line_name, disk_type, dpc, vsys, x0, 
             parameters["zq0"] = {"fixed":False, "value":0.1, "limits":[0.01,0.5]}
             parameters["plz"] = {"fixed":True, "value":1.3, "limits":[1., 1.5]}
     
-    model_dir = "{0}{1}/".format(source_dir, disk_type)
+    model_dir = "{0}{1}_{2}/".format(source_dir, disk_type, line_name)
     with open(model_dir + 'config.py', 'w') as config:
         # write import statements
         config.write('import numpy as np\n')
