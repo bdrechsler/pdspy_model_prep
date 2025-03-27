@@ -43,6 +43,7 @@ def create_config(source_name, source_dir, line_name, disk_type, dpc, vsys, x0, 
 
     line = line_dict[line_name]
     freq = line['rest_freq']
+    abundance = line['abundance']
     gas_file = line['data_file']
 
     visibilities = {
@@ -112,7 +113,7 @@ def create_config(source_name, source_dir, line_name, disk_type, dpc, vsys, x0, 
             "loga_turb_env":{"fixed":True, "value":-3.0, "limits":[-3.,-0.875]},
             # Gas parameters.
             "gas_file1":{"fixed":True, "value":gas_file, "limits":[0.,0.]},
-            "logabundance1":{"fixed":True, "value":np.log10(1.0e-4/560.), "limits":[-10.,-2.]},
+            "logabundance1":{"fixed":True, "value":np.log10(abundance), "limits":[-10.,-2.]},
         # Viewing parameters.
             "i":{"fixed":False, "value":90.0, "limits":[0.,180.]},
             "pa":{"fixed":False, "value":94.85, "limits":[0.0, 360.0]},
