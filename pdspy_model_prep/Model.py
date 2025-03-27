@@ -7,7 +7,7 @@ from .create_batch_submit import create_batch_submit
 class Model:
 
     def __init__(self, source_name, dpc, vsys, line_name='C18O', chan_width='0.334km/s',
-                 nchan=42, x0=[-0.5, 0.5], y0=[-0.5, 0.5], source_dir = './',
+                 nchan=42, x0=[-0.5, 0.5], y0=[-0.5, 0.5], source_dir = './', svel=None,
                  disk_types=["truncated", "exptaper", "dartois-exptaper", "dartois-truncated"]):
 
         self.source_name = source_name
@@ -16,6 +16,7 @@ class Model:
         self.chan_width = chan_width
         self.nchan = nchan
         self.vsys = vsys
+        self.svel = svel
         self.x0=x0
         self.y0=y0
         self.source_dir = source_dir
@@ -32,7 +33,7 @@ class Model:
             prep_data(source_name = self.source_name, source_dir = self.source_dir, 
                       line_name = self.line_name, chan_width = self.chan_width, 
                       nchan = self.nchan, vsys = self.vsys, robust= robust,
-                      remove_files = remove_files)
+                      remove_files = remove_files, svel = self.svel)
 
         if config or batch_script:
             for disk_type in self.disk_types:
