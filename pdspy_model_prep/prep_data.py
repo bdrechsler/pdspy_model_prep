@@ -13,7 +13,7 @@ from .gas_lines import line_dict
 
 
 def prep_data(
-    source_name, source_dir, line_name, chan_width, nchan, vsys, robust, remove_files
+    source_name, source_dir, line_name, chan_width, nchan, vsys, robust, remove_files, svel=None
 ):
     """
     Prep the data by performing an mstranform and imaging the data
@@ -63,7 +63,8 @@ def prep_data(
         print("Creating " + outfile)
         os.system("rm -rf " + outfile)
 
-        svel = str(vsys - 7.0) + "km/s"
+        if svel is None:
+            svel = str(vsys - 7.0) + "km/s"
 
         mstransform(
             vis=line_vis,
