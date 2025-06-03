@@ -13,7 +13,7 @@ from .gas_lines import line_dict
 
 
 def prep_data(
-    source_name, source_dir, line_name, chan_width, nchan, vsys, robust, remove_files, svel=None
+    source_name, source_dir, line_name, chan_width, nchan, vsys, vwidth, robust, remove_files
 ):
     """
     Prep the data by performing an mstranform and imaging the data
@@ -35,16 +35,16 @@ def prep_data(
     )  # list of spectral line ms files
     line = line_dict[line_name]
     rfreq = line["rest_freq"]
-
+    chan_width_str=str(chan_width)+'km/s'
     """
     #### Regrid the data #####
     """
     regrid_vis = []
-
+    svel = str(vsys - vwidth/2.0) + "km/s"
     for line_vis in line_vis_list:
         # find spectral window corresponding to rfreq
         # convert rest frequency to Hz
-        rfreq_Hz = float(rfreq[:-3]) * 1e9
+        rfreq_Hz = float(rfreq) * 1e9
 
         # use msmd to get spw info
         msmd = msmetadata()
@@ -52,9 +52,18 @@ def prep_data(
         nspw = msmd.nspw()
         # create an array of the central freq for each spw
         spw_freqs = np.array([msmd.meanfreq(spw) for spw in range(nspw)])
-
+        spw_num=np.arange(len(spw_freqs))
+        req_res=chan_width/3.0e5*rfreq_Hz
+        spw_chanwidths=np.zeros(len(spw_freqs))
+        for s,spw in enumerate(spw_num):
+          spw_chanwidths[s]=np.abs(np.median(msmd.chanwidths(spw)))
+        
+        good_spws=np.where(spw_chanwidths < req_res)
+        spw_freqs=spw_freqs[good_spws[0]]
+        spw_num=spw_num[good_spws[0]]
         # find spw with central freq closest to rfreq
-        spw = str(np.argmin(np.abs(spw_freqs - rfreq_Hz)))
+        spw_sel = np.argmin(np.abs(spw_freqs - rfreq_Hz))
+        spw=str(spw_num[spw_sel])
         print("spectral window: ", spw)
 
         outfile = line_vis.replace(
@@ -63,8 +72,7 @@ def prep_data(
         print("Creating " + outfile)
         os.system("rm -rf " + outfile)
 
-        if svel is None:
-            svel = str(vsys - 7.0) + "km/s"
+
 
         mstransform(
             vis=line_vis,
@@ -73,9 +81,9 @@ def prep_data(
             outputvis=outfile,
             outframe="LSRK",
             veltype="radio",
-            restfreq=rfreq,
+            restfreq=rfreq+'GHz',
             datacolumn="data",
-            width=chan_width,
+            width=chan_width_str,
             nchan=nchan,
             start=svel,
             combinespws=False,
@@ -83,6 +91,7 @@ def prep_data(
             timeaverage=True,
             timebin="30.25s",
             spw=spw,
+            interpolation='cubic'
         )
 
         regrid_vis.append(outfile)
@@ -114,11 +123,11 @@ def prep_data(
         imsize=512,
         deconvolver="hogbom",
         start=svel,
-        width=chan_width,
+        width=chan_width_str,
         nchan=nchan,
         outframe="LSRK",
         veltype="radio",
-        restfreq=rfreq,
+        restfreq=rfreq+'GHz',
         cell="0.025arcsec",
         gain=0.1,
         niter=20000,
@@ -134,6 +143,7 @@ def prep_data(
         uvtaper=["2000klambda"],
         uvrange=uvrange,
         parallel=False,
+        interpolation='nearest'
     )
 
     # export the images
